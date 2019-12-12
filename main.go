@@ -24,8 +24,8 @@ type config struct {
 	// WriteToFile, if true, writes the formatted output to OutputFilename.
 	WriteToFile bool
 
-	preferredFields map[string]int
 	file            *dst.File
+	preferredFields map[string]int
 }
 
 // Parse validates the configuration and creates the parsed *dst.File.
@@ -132,13 +132,18 @@ func (a byFieldName) Less(i, j int) bool {
 	x1, ok1 := a.PreferredFields[x]
 	y1, ok2 := a.PreferredFields[y]
 
+	// If both fields are preferred, compare their values.
 	if ok1 && ok2 {
 		return x1 < y1
 	} else if ok1 && !ok2 {
+		// If x is preferred, consider it first.
 		return true
 	} else if !ok1 && ok2 {
+		// Inverse of above.
 		return false
 	}
+
+	// If all else fails, compare string values.
 	return x < y
 }
 
